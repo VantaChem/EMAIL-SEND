@@ -1,0 +1,13 @@
+   <!doctype html>
+   <html><head><meta charset="utf-8"><title>Opening email…</title></head>
+   <body style="font-family:Segoe UI,Arial,sans-serif;text-align:center;padding-top:60px;color:#404040">
+   <p>Opening your email app…</p>
+   <script>
+     var to = new URLSearchParams(location.search).get('to') || '';
+     if (/^[^@\s]+@vanta-chem\.com$/i.test(to)) {
+       location.href = 'mailto:' + to;
+       document.body.insertAdjacentHTML('beforeend',
+         '<p>If nothing opened, email <a href="mailto:' + to + '">' + to + '</a></p>');
+     }
+   </script>
+   </body></html>
