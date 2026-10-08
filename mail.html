@@ -7,31 +7,56 @@
   .box{background:#fff;padding:36px 48px 40px;border-radius:16px;text-align:center;
        box-shadow:0 4px 20px rgba(0,0,0,.08);max-width:420px;border-top:6px solid #799B2C}
   .logo{max-width:220px;max-height:80px;margin:0 auto 24px;display:block}
-  h1{font-size:20px;margin:0 0 6px}
+  h1{font-size:20px;margin:0 0 6px;word-break:break-all}
   p{margin:0 0 24px;color:#666}
-  a.btn{display:block;padding:14px 20px;border-radius:10px;text-decoration:none;
-        font-weight:600;font-size:16px;margin-top:12px}
-  .primary{background:#799B2C;color:#fff}
+  a.btn,button.btn{display:block;width:100%;box-sizing:border-box;padding:14px 20px;border-radius:10px;
+        text-decoration:none;font:600 16px Segoe UI,Arial,sans-serif;margin-top:12px;cursor:pointer}
+  .primary{background:#799B2C;color:#fff;border:2px solid #799B2C}
   .secondary{background:#fff;color:#799B2C;border:2px solid #799B2C}
   .foot{margin-top:28px;font-size:12px;color:#999}
 </style></head>
 <body>
 <div class="box">
   <img class="logo" src="logo.png" alt="VantaChem">
-  <div id="content"><h1>Invalid link</h1></div>
+  <div id="content"><h1>Invalid link</h1><p>This link is missing a VantaChem email address.</p></div>
   <div class="foot">VantaChem • Oilfield Chemical Solutions</div>
 </div>
 <script>
-  var to = new URLSearchParams(location.search).get('to') || '';
-  if (/^[^@\s]+@vanta-chem\.com$/i.test(to)) {
-    document.getElementById('content').innerHTML =
-      '<h1>Email ' + to + '</h1><p>Choose how you\'d like to send your message.</p>' +
-      '<a class="btn primary" id="mail" href="mailto:' + to + '">Open my email app</a>' +
-      '<a class="btn secondary" href="https://outlook.office.com/mail/deeplink/compose?to=' + to + '">Use Outlook on the web</a>';
-    try { location.href = 'mailto:' + to; } catch (e) {}
-    document.getElementById('mail').addEventListener('click', function () {
-      setTimeout(function () { window.close(); }, 1500);
+  var to = (new URLSearchParams(location.search).get('to') || '').trim();
+
+  // Only plain email characters allowed, and only @vanta-chem.com addresses
+  if (/^[A-Za-z0-9._%+-]+@vanta-chem\.com$/i.test(to)) {
+    var box = document.getElementById('content');
+    box.innerHTML = '';
+
+    var h1 = document.createElement('h1');
+    h1.textContent = 'Email ' + to;
+    var p = document.createElement('p');
+    p.textContent = "Choose how you'd like to send your message.";
+
+    var mail = document.createElement('a');
+    mail.className = 'btn primary';
+    mail.href = 'mailto:' + to;
+    mail.textContent = 'Open my email app';
+
+    var web = document.createElement('a');
+    web.className = 'btn secondary';
+    web.href = 'https://outlook.office.com/mail/deeplink/compose?to=' + encodeURIComponent(to);
+    web.target = '_blank';
+    web.rel = 'noopener';
+    web.textContent = 'Use Outlook on the web';
+
+    var copy = document.createElement('button');
+    copy.className = 'btn secondary';
+    copy.textContent = 'Copy email address';
+    copy.addEventListener('click', function () {
+      navigator.clipboard.writeText(to).then(function () {
+        copy.textContent = 'Copied!';
+        setTimeout(function () { copy.textContent = 'Copy email address'; }, 2000);
+      });
     });
+
+    box.append(h1, p, mail, web, copy);
   }
 </script>
 </body></html>
